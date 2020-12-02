@@ -86,7 +86,6 @@ def run_sim_test(filename, descriptors, sim_fn):
     float
 
     >>> descriptors = build_semantic_descriptors_from_files(['test.txt'])
-    >>> print(descriptors)
     >>> run_sim_test('test.txt', descriptors, get_cos_sim)
     15.0
     '''
@@ -101,10 +100,7 @@ def run_sim_test(filename, descriptors, sim_fn):
         word = options[0]
         answer = options[1]
         choices = options[2 : ]
-        print(choices)
         guess = most_sim_word(word, choices, descriptors, sim_fn)
-        print(guess)
-        print(answer)
         if guess == answer:
             correct += 1
         line = file.readline()
@@ -129,10 +125,12 @@ def generate_bar_graph(list_fun, filename):
     '''
     descriptors = build_semantic_descriptors_from_files(["pg7178.txt", "pg2600.txt"])
     performance = []
+    name = []
     for fun in list_fun:
+        name.append(str(fun))
         percentage = run_sim_test(filename, descriptors, fun)
         performance.append(percentage)
-    x = np.arange(len(list_fun))
+    x = np.array(name)
     y = np.array(performance)
     plt.bar(x, y)
     plt.title("Performance of each function")
@@ -140,4 +138,4 @@ def generate_bar_graph(list_fun, filename):
 
 if __name__ == '__main__':
     doctest.testmod()
-    #generate_bar_graph([get_cos_sim], 'test.txt')
+    generate_bar_graph([get_cos_sim, get_euc_sim, get_norm_euc_sim], 'test.txt')

@@ -215,6 +215,8 @@ def normalize_vector(v):
     0.728
     '''
     norm = get_vector_norm(v)
+    if(norm == 0):
+        return None
     for key in v:
         v[key] = v[key] / norm
         

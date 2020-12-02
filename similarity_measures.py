@@ -117,6 +117,8 @@ def get_cos_sim(d1, d2):
     '''
     dot_product = vectors_utils.get_dot_product(d1, d2)
     norm = vectors_utils.get_vector_norm(d1) * vectors_utils.get_vector_norm(d2)
+    if(norm == 0):
+        raise ZeroDivisionError
     result = dot_product / norm
     return result
 

@@ -33,11 +33,13 @@ def get_sentences(paragraph):
     >>> get_sentences(t)
     ['Are you insane', 'Of course I want to leave the Dursleys', 'Have you got a house', 'When can I move in']
     '''
+    if('.' not in paragraph and '!' not in paragraph and '?' not in paragraph):
+        return [paragraph]
     result = []
     tmp = ''
     i = 0
     while(i < len(paragraph)):
-        if paragraph[i] not in PUNCTUATION + ['\n']:
+        if paragraph[i] not in PUNCTUATION:
             tmp += paragraph[i]
             i += 1
         else:
@@ -69,7 +71,7 @@ def get_word_breakdown(paragraph):
     >>> s == w
     True
     '''
-    
+    paragraph = paragraph.replace('\n', ' ')
     split = OTHER_PUNCTUATION + [' ']
     sentences = get_sentences(paragraph.lower())
     result = []
@@ -85,7 +87,7 @@ def get_word_breakdown(paragraph):
                 tmp.append(word)
                 word = ''
                 i += 2
-            elif s[i] == ' ' or s[i] == '\n':
+            elif s[i] == ' ':
                 tmp.append(word)
                 word = ''
                 i += 1
@@ -123,9 +125,7 @@ def build_semantic_descriptors_from_files(f_list):
     result = {}
     for f in f_list:
         file = open(f, "r", encoding="utf-8")
-        content = ""
-        lines = file.read()
-        content = lines.replace('\n', '. ')
+        content = file.read()
         words = get_word_breakdown(content)
         tmp = similarity_measures.get_all_semantic_descriptors(words)
         vectors_utils.merge_dicts_of_vectors(result, tmp)
