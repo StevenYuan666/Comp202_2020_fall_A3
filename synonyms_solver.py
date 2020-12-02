@@ -44,14 +44,22 @@ def most_sim_word(word, choices, descriptors, sim_fn):
     >>> sem_descs = {'cat' : c, 'feline' : f, 'dog' : d, 'horse' : h}
     >>> most_sim_word('feline', choices, sem_descs, get_cos_sim)
     'cat'
+    >>> y = {'draw': {'paint': 2, 'walk': 1}, 'paint': {'draw': 2, 'walk': 2}, 'walk': {'draw': 1, 'paint': 2, 'stroll': 2, 'destroy': 2, 'infringe': 1, 'violate': 2}}
+    >>> yy = ['paint', 'walk']
+    >>> most_sim_word('draw', yy, y, get_cos_sim)
+    'walk'
+    >>> dd = {'duty': {'task': 2, 'example': 1}, 'task': {'duty': 2, 'example': 2}, 'example': {'duty': 1, 'task': 2}}
+    >>> zz = ['task', 'example']
+    >>> most_sim_word('duty', dd, zz, get_cos_sim)
+    ''
     '''
     key = ''
-    max_num = 0
+    max_num = float('-inf')
     for choice in choices:
         if choice in descriptors and word in descriptors:
             tmp = sim_fn(descriptors[word], descriptors[choice])
         else:
-            tmp = -1
+            tmp = float('-inf')
         if tmp > max_num:
             max_num = tmp
             key = choice
@@ -77,6 +85,10 @@ def run_sim_test(filename, descriptors, sim_fn):
     -------
     float
 
+    >>> descriptors = build_semantic_descriptors_from_files(['test.txt'])
+    >>> print(descriptors)
+    >>> run_sim_test('test.txt', descriptors, get_cos_sim)
+    15.0
     '''
     num_questions = 0
     correct = 0
@@ -88,14 +100,15 @@ def run_sim_test(filename, descriptors, sim_fn):
         options = line.split()
         word = options[0]
         answer = options[1]
-        choices = []
-        choices.append(options[2])
-        choices.append(options[3])
+        choices = options[2 : ]
+        print(choices)
         guess = most_sim_word(word, choices, descriptors, sim_fn)
+        print(guess)
+        print(answer)
         if guess == answer:
             correct += 1
         line = file.readline()
-    return correct / num_questions
+    return correct / num_questions * 100
         
 def generate_bar_graph(list_fun, filename):
     '''
@@ -127,4 +140,4 @@ def generate_bar_graph(list_fun, filename):
 
 if __name__ == '__main__':
     doctest.testmod()
-    generate_bar_graph([get_cos_sim], 'test.txt')
+    #generate_bar_graph([get_cos_sim], 'test.txt')
